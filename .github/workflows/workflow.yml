@@ -34,15 +34,15 @@ jobs:
 
         echo "v$MAJOR.$MINOR.$NEW_PATCH" > VERSION
 
-        echo "::set-env name=version::v$MAJOR.$MINOR.$NEW_PATCH"
+        echo "new_version=v$MAJOR.$MINOR.$NEW_PATCH" >> $GITHUB_ENV
 
     - name: Create tag
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ env.version }}
-        release_name: Release ${{ env.version }}
+        tag_name: ${{ env.new_version }}
+        release_name: Release ${{ env.new_version }}
         body: |
           This is a new release.
         draft: false
