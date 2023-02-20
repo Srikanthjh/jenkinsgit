@@ -48,5 +48,3 @@ jobs:
         release_name: Release ${{ env.new_version }}
         body: |
           This is a new release.
-        draft: false
-        prerelease: false
