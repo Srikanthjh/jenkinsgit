@@ -18,9 +18,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       
-    - name: Create VERSION file
-      run: echo "v1.0.0" > VERSION
-      
     - name: Read version from file
       run: |
         export VERSION=$(cat VERSION)
@@ -35,17 +32,17 @@ jobs:
 
         NEW_PATCH=$((PATCH+1))
 
-        echo "v$MAJOR.$MINOR.$NEW_PATCH" >> $GITHUB_ENV
+        echo "v$MAJOR.$MINOR.$NEW_PATCH" > VERSION
 
-        echo "::set-output name=new_version::v$MAJOR.$MINOR.$NEW_PATCH"
+        echo "::set-env name=version::v$MAJOR.$MINOR.$NEW_PATCH"
 
     - name: Create tag
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.increment-version.outputs.new_version }}
-        release_name: Release ${{ steps.increment-version.outputs.new_version }}
+        tag_name: ${{ .env.version }}
+        release_name: Release ${{ env.version }}
         body: |
           This is a new release.
         draft: false
