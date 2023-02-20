@@ -40,6 +40,7 @@ jobs:
         git config --local user.name "GitHub Action"
         git add .github/workflows/VERSION
         git commit -m "Update version file"
+        git push
 
     - name: Create tag
       uses: actions/create-release@v1
