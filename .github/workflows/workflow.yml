@@ -18,13 +18,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       
+    - name: Create VERSION file
+      run: echo "v1.0.0" > VERSION
+
     - name: Read version from file
-      id: get_version
-      run: echo "::set-output name=version::$(cat VERSION)"
+      run: echo "::set-env name=VERSION::$(cat VERSION)"
+
     - name: Increment version
       run: |
         VERSION=$VERSION
-        MAJOR=$(echo $VERSION | cut -d '.' -f 1)
+        MAJOR=$(echo $VERSION | cut -d '.' -f 1 | sed 's/v//')
         MINOR=$(echo $VERSION | cut -d '.' -f 2)
         PATCH=$(echo $VERSION | cut -d '.' -f 3)
 
@@ -43,5 +46,5 @@ jobs:
         release_name: Release ${{ steps.increment-version.outputs.new_version }}
         body: |
           This is a new release.
-        # draft: false
-        # prerelease: false
+        draft: false
+        prerelease: false
