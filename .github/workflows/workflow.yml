@@ -18,9 +18,30 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       
-    - name: git tag
+    - name: Read version from file
+      id: get_version
+      run: echo "::set-output name=version::$(cat VERSION)"
+    - name: Increment version
       run: |
-        # # git config user.name "${{ github.actor }}"
-        # # git config user.email "${{ github.actor }}@users.noreply.github.com"
-        git tag -a "$(echo ${{ steps.branch.outputs.branch_name }} | sed -e 's/release/v/')-$(date +'%Y%m%d%H%M%S')" -m "Tagging $(echo ${{ steps.branch.outputs.branch_name }} | sed -e 's/release/v/')"
-        git push --follow-tags
+        VERSION=$VERSION
+        MAJOR=$(echo $VERSION | cut -d '.' -f 1)
+        MINOR=$(echo $VERSION | cut -d '.' -f 2)
+        PATCH=$(echo $VERSION | cut -d '.' -f 3)
+
+        NEW_PATCH=$((PATCH+1))
+
+        echo "v$MAJOR.$MINOR.$NEW_PATCH" > VERSION
+
+        echo "::set-output name=new_version::v$MAJOR.$MINOR.$NEW_PATCH"
+
+    - name: Create tag
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.increment-version.outputs.new_version }}
+        release_name: Release ${{ steps.increment-version.outputs.new_version }}
+        body: |
+          This is a new release.
+        # draft: false
+        # prerelease: false
