@@ -1,0 +1,34 @@
+name: Create Tag on Merge to Master
+
+on:
+  push:
+    branches:
+      - release/* # replace with your release branch name
+  pull_request:
+    types: [closed]
+    branches:
+      - release/* # replace with your release branch name
+    paths:
+      - '**'
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged && github.event.pull_request.base.ref == 'master'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Get current branch name
+      id: branch
+      run: echo ::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})
+
+    - name: Create tag
+      if: startsWith(steps.branch.outputs.branch_name, 'release/')
+      run: |
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+        git tag -a "$(echo ${{ steps.branch.outputs.branch_name }} | sed -e 's/release/v/')-$(date +'%Y%m%d%H%M%S')" -m "Tagging $(echo ${{ steps.branch.outputs.branch_name }} | sed -e 's/release/v/')"
+        git push --follow-tags
+
