@@ -35,14 +35,14 @@ jobs:
 
         NEW_PATCH=$((PATCH+1))
 
-        echo "v$MAJOR.$MINOR.$NEW_PATCH" > test/VERSION
+        echo "v$MAJOR.$MINOR.$NEW_PATCH" > VERSION
 
         echo "new_version=v$MAJOR.$MINOR.$NEW_PATCH" >> $GITHUB_ENV
     - name: Commit changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add test/VERSION
+        git add VERSION
         git commit -m "Bump version to v$MAJOR.$MINOR.$NEW_PATCH.$BUG"
         git push
 
