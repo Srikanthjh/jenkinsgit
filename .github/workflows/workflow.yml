@@ -23,7 +23,7 @@ jobs:
       
     - name: Read version from file
       run: |
-        export VERSION=$(cat .github/workflows/VERSION)
+        export VERSION=$(cat jenkinsgit/VERSION)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
 
     - name: Increment version
@@ -42,7 +42,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add .github/workflows/VERSION
+        git add jenkinsgit/VERSION
         git commit -m "Bump version to v$MAJOR.$MINOR.$NEW_PATCH.$BUG"
         git push
 
