@@ -17,13 +17,13 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
-    - name: Create VERSION file
-      run: echo "v1.0.0" > VERSION
+    
+    # - name: Create VERSION file
+    #   run: echo "v1.0.0" > VERSION
       
     - name: Read version from file
       run: |
-        export VERSION=$(cat VERSION)
+        export VERSION=$(cat .github/workflows/VERSION)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
 
     - name: Increment version
