@@ -18,11 +18,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       
-    - name: Create VERSION file
-      run: echo "v1.0.0" > VERSION
-
     - name: Read version from file
-      run: echo "::set-env name=VERSION::$(cat VERSION)"
+      run: |
+        export VERSION=$(cat VERSION)
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
 
     - name: Increment version
       run: |
