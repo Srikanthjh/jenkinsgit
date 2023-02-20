@@ -35,7 +35,7 @@ jobs:
 
         NEW_PATCH=$((PATCH+1))
 
-        echo "v$MAJOR.$MINOR.$NEW_PATCH" > VERSION
+        echo "v$MAJOR.$MINOR.$NEW_PATCH" >> $GITHUB_ENV
 
         echo "::set-output name=new_version::v$MAJOR.$MINOR.$NEW_PATCH"
 
