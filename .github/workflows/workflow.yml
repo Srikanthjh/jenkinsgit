@@ -35,7 +35,7 @@ jobs:
 
         NEW_PATCH=$((PATCH+1))
 
-        echo "v$MAJOR.$MINOR.$NEW_PATCH" > .github/workflows/VERSION
+        echo "v$MAJOR.$MINOR.$NEW_PATCH" > jenkinsgit/VERSION
 
         echo "new_version=v$MAJOR.$MINOR.$NEW_PATCH" >> $GITHUB_ENV
     - name: Commit changes
