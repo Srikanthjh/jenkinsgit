@@ -1,50 +1,45 @@
 name: Create Tag on Merge to test
 
 on:
-  # push:
-  #   branches:
-  #     - test
   pull_request:
     types: [closed]
     branches:
-      - test
+      - devops/AmMMHWtl/1395
 
 jobs:
   create-tag:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged && github.event.pull_request.base.ref == 'test'
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged && github.event.pull_request.base.ref == 'devops/AmMMHWtl/1395'
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    
-    # - name: Create VERSION file
-    #   run: echo "v1.0.0" > VERSION
-      
+       
     - name: Read version from file
       run: |
-        export VERSION=$(cat test/VERSION)
+        export VERSION=$(cat .github/workflows/VERSION)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
 
     - name: Increment version
       run: |
         VERSION=$VERSION
-        MAJOR=$(echo $VERSION | cut -d '.' -f 1 | sed 's/v//')
-        MINOR=$(echo $VERSION | cut -d '.' -f 2)
-        PATCH=$(echo $VERSION | cut -d '.' -f 3)
+        MAJOR=$(echo "${VERSION}" | cut -d '.' -f 1 | sed 's/[^0-9]*//g')
+        MINOR=$(echo "${VERSION}" | cut -d '.' -f 2 | sed 's/[^0-9]*//g')
+        PATCH=$(echo "${VERSION}" | cut -d '.' -f 3 | sed 's/[^0-9]*//g')
+        BUG=$(echo "${VERSION}" | cut -d '.' -f 4 | sed 's/[^0-9]*//g')
 
         NEW_PATCH=$((PATCH+1))
 
-        echo "v$MAJOR.$MINOR.$NEW_PATCH" > VERSION
+        echo "$MAJOR.$MINOR.$NEW_PATCH.$BUG" > .github/workflows/VERSION
 
-        echo "new_version=v$MAJOR.$MINOR.$NEW_PATCH" >> $GITHUB_ENV
+        echo "new_version=$MAJOR.$MINOR.$NEW_PATCH.$BUG" >> $GITHUB_ENV
+
     - name: Commit changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add VERSION
-        git commit -m "Bump version to v$MAJOR.$MINOR.$NEW_PATCH.$BUG"
-        git push
+        git add .github/workflows/VERSION
+        git commit -m "Update version file"
 
     - name: Create tag
       uses: actions/create-release@v1
@@ -52,6 +47,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ env.new_version }}
-        release_name: Release ${{ env.new_version }}
+        # release_name: Release ${{ env.new_version }}
         body: |
           This is a new release.
