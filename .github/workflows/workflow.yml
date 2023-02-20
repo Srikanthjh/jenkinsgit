@@ -17,7 +17,7 @@ jobs:
        
     - name: Read version from file
       run: |
-        export VERSION=$(cat .github/workflows/VERSION)
+        export VERSION=$(cat ./VERSION)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
 
     - name: Increment version
@@ -30,7 +30,7 @@ jobs:
 
         NEW_PATCH=$((PATCH+1))
 
-        echo "$MAJOR.$MINOR.$NEW_PATCH.$BUG" > .github/workflows/VERSION
+        echo "$MAJOR.$MINOR.$NEW_PATCH.$BUG" > VERSION
 
         echo "new_version=$MAJOR.$MINOR.$NEW_PATCH.$BUG" >> $GITHUB_ENV
 
@@ -38,7 +38,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add .github/workflows/VERSION
+        git add VERSION
         git commit -m "Update version file"
         git push
 
