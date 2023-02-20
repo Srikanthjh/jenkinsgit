@@ -19,7 +19,6 @@ jobs:
       run: |
         export VERSION=$(cat ./VERSION)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
-
     - name: Increment version
       run: |
         VERSION=$VERSION
@@ -28,11 +27,17 @@ jobs:
         PATCH=$(echo "${VERSION}" | cut -d '.' -f 3 | sed 's/[^0-9]*//g')
         BUG=$(echo "${VERSION}" | cut -d '.' -f 4 | sed 's/[^0-9]*//g')
 
-        NEW_PATCH=$((PATCH+1))
+        if [ "$PATCH" -lt 9 ]; then
+        NEW_VERSION="$MAJOR.$MINOR.$((PATCH+1)).$BUG"
+        elif [ "$MINOR" -lt 9 ]; then
+        NEW_VERSION="$MAJOR.$((MINOR+1)).0.$BUG"
+        else
+        NEW_VERSION="$((MAJOR+1)).0.0.$BUG"
+        fi
+        
+        echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
 
-        echo "$MAJOR.$MINOR.$NEW_PATCH.$BUG" > VERSION
-
-        echo "new_version=$MAJOR.$MINOR.$NEW_PATCH.$BUG" >> $GITHUB_ENV
+        echo "$NEW_VERSION" > VERSION
 
     - name: Commit changes
       run: |
@@ -41,7 +46,6 @@ jobs:
         git add VERSION
         git commit -m "Update version file"
         git push
-
     - name: Create tag
       uses: actions/create-release@v1
       env:
