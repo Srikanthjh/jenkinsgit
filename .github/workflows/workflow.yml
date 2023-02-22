@@ -23,7 +23,7 @@ jobs:
 
       - name: Create tag if not exists
         run: |          
-          if git rev-parse ${{ steps.Read-version.outputs.VERSION }} >/dev/null 2>&1; then
+          if git show-ref --tags ${{ steps.Read-version.outputs.VERSION }} >/dev/null 2>&1; then
             echo "Tag ${{ steps.Read-version.outputs.VERSION }} already exists"
           else
             git tag -a ${{ steps.Read-version.outputs.VERSION }} -m "Updated tag"
