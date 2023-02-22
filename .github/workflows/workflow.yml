@@ -12,20 +12,21 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.pull_request.merged && github.event.pull_request.base.ref == 'test'
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
     
-    - name: Read version from file
-      id: Read-version
-      run: |
-        export VERSION=$(cat ./VERSION)
-        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+      - name: Read version from file
+        id: Read-version
+        run: |
+          export VERSION=$(cat ./VERSION)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-    - name: Create tag
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.Read-version.outputs.VERSION }}
-        body: |
-          This is a new release.
+      - name: Create tag
+        uses: actions/create-tag@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.Read-version.outputs.VERSION }}
+          message: |
+            This is a new tag.
+          if-no-tag: true
