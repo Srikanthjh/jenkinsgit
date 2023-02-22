@@ -14,44 +14,17 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-       
+    
     - name: Read version from file
       run: |
         export VERSION=$(cat ./VERSION)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
-    - name: Increment version
-      run: |
-        VERSION=$VERSION
-        MAJOR=$(echo "${VERSION}" | cut -d '.' -f 1 | sed 's/[^0-9]*//g')
-        MINOR=$(echo "${VERSION}" | cut -d '.' -f 2 | sed 's/[^0-9]*//g')
-        PATCH=$(echo "${VERSION}" | cut -d '.' -f 3 | sed 's/[^0-9]*//g')
-        BUG=$(echo "${VERSION}" | cut -d '.' -f 4 | sed 's/[^0-9]*//g')
 
-        if [ "$PATCH" -lt 9 ]; then
-        NEW_VERSION="$MAJOR.$MINOR.$((PATCH+1)).$BUG"
-        elif [ "$MINOR" -lt 9 ]; then
-        NEW_VERSION="$MAJOR.$((MINOR+1)).0.$BUG"
-        else
-        NEW_VERSION="$((MAJOR+1)).0.0.$BUG"
-        fi
-        
-        echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
-
-        echo "$NEW_VERSION" > VERSION
-
-    - name: Commit changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add VERSION
-        git commit -m "Update version file"
-        git push
     - name: Create tag
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ env.new_version }}
-        # release_name: Release ${{ env.new_version }}
         body: |
           This is a new release.
