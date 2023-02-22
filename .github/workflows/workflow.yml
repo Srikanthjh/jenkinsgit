@@ -21,13 +21,9 @@ jobs:
           export VERSION=$(cat ./VERSION)
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Create tag if not exists
-        run: |          
-          if git show-ref --tags ${{ steps.Read-version.outputs.VERSION }} >/dev/null 2>&1; then
-            echo "Tag ${{ steps.Read-version.outputs.VERSION }} already exists"
-          else
-            git tag -a ${{ steps.Read-version.outputs.VERSION }} -m "Updated tag"
-            git push origin ${{ steps.Read-version.outputs.VERSION }}
-          fi
+      - name: Create tag
+        run: |
+          git tag ${{ steps.Read-version.outputs.VERSION }}
+          git push origin ${{ steps.Read-version.outputs.VERSION }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
