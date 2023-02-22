@@ -20,13 +20,10 @@ jobs:
         run: |
           export VERSION=$(cat ./VERSION)
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-
+          
       - name: Create tag
-        uses: actions/create-tag@v1
+        run: |
+          git tag ${{ steps.Read-version.outputs.VERSION }}
+          git push origin ${{ steps.Read-version.outputs.VERSION }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.Read-version.outputs.VERSION }}
-          message: |
-            This is a new tag.
-          if-no-tag: true
