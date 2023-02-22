@@ -21,10 +21,13 @@ jobs:
           export VERSION=$(cat ./VERSION)
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Create tag
+      - name: Create tag if not exists
         run: |
-          git tag ${{ steps.Read-version.outputs.VERSION }}
-          if-no-tag: true
-          git push origin ${{ steps.Read-version.outputs.VERSION }}
+          if ! git rev-parse v${{ steps.Read-version.outputs.VERSION }} >/dev/null 2>&1; then
+          git tag v${{ steps.Read-version.outputs.VERSION }}
+          git push origin v${{ steps.Read-version.outputs.VERSION }}
+          else
+          echo "Tag v${{ steps.Read-version.outputs.VERSION }} already exists"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
