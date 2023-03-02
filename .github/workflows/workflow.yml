@@ -12,18 +12,10 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.pull_request.merged && github.event.pull_request.base.ref == 'test'
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-    
-      - name: Read version from file
-        id: Read-version
-        run: |
-          export VERSION=$(cat ./VERSION)
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-
       - name: Create tag
         run: |
-          git tag ${{ steps.Read-version.outputs.VERSION }}
-          git push origin ${{ steps.Read-version.outputs.VERSION }}
+          git tag $(cat VERSION)
+          git push origin $(cat VERSION)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
