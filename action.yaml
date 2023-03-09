@@ -1,4 +1,4 @@
-name: "Main action file of composite actions"
+name: "Main action file to create tag"
 description: "composite actions"
 inputs:
   GITHUB_TOKEN:
